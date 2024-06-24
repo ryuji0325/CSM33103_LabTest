@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Staff Directory</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Staff Directory</h1>
+        <ul id="staff-list" class="list-group">
+            <!-- Staff emails will be populated here -->
+        </ul>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script>
+        console.log('Script loaded'); 
+
+        $(document).ready(function() {
+            console.log('Document ready'); 
+
+            $.ajax({
+                url: 'https://kerbau.odaje.biz/getstaff.php',
+                method: 'GET',
+                success: function(data) {
+                    console.log('Data fetched successfully:', data); 
+                    let staff = JSON.parse(data);
+                    let staffList = $('#staff-list');
+                    staff.forEach(function(item) {
+                        let staffMember = JSON.parse(item);
+                        if (staffMember.status === 1) return; 
+                        let listItem = $('<li class="list-group-item"></li>');
+                        listItem.text(staffMember.email);
+                        listItem.attr('id', staffMember.employeeNumber);
+                        listItem.click(function() {
+                            window.location.href = 'secondpage.html?id=' + staffMember.employeeNumber;
+                        });
+                        staffList.append(listItem);
+                    });
+                },
+                error: function(error) {
+                    console.log('Error fetching staff data:', error); 
+                }
+            });
+        });
+    </script>
+</body>
+</html>

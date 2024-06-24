@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Staff Details</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Staff Details</h1>
+        <div id="staff-details">
+            <!-- Staff details will be populated here -->
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script>
+        console.log('Script loaded'); 
+
+        $(document).ready(function() {
+            console.log('Document ready'); 
+
+            let urlParams = new URLSearchParams(window.location.search);
+            let employeeNumber = urlParams.get('id');
+            console.log('Employee ID:', employeeNumber); 
+
+            if (employeeNumber) {
+                $.ajax({
+                    url: 'https://kerbau.odaje.biz/getstaff.php',
+                    method: 'GET',
+                    success: function(data) {
+                        console.log('Data fetched successfully:', data); 
+                        let staff = JSON.parse(data);
+                        let staffDetails = $('#staff-details');
+                        let found = false;
+                        staff.forEach(function(item) {
+                            let staffMember = JSON.parse(item);
+                            if (staffMember.employeeNumber === employeeNumber) {
+                                found = true;
+                                staffDetails.append('<p>Employee Number: ' + staffMember.employeeNumber + '</p>');
+                                staffDetails.append('<p>Name: ' + staffMember.firstName + ' ' + staffMember.lastName + '</p>');
+                                staffDetails.append('<p>Extension: ' + staffMember.extension + '</p>');
+                                staffDetails.append('<p>Email: ' + staffMember.email + '</p>');
+                                staffDetails.append('<p>Office Code: ' + staffMember.officeCode + '</p>');
+                                staffDetails.append('<p>Reports To: ' + staffMember.reportsTo + '</p>');
+                                staffDetails.append('<p>Job Title: ' + staffMember.jobTitle + '</p>');
+                            }
+                        });
+                        if (!found) {
+                            staffDetails.append('<p>No details found for this employee.</p>');
+                        }
+                    },
+                    error: function(error) {
+                        console.log('Error fetching staff details:', error); 
+                        let staffDetails = $('#staff-details');
+                        staffDetails.append('<p>Error fetching staff details.</p>');
+                    }
+                });
+            } else {
+                $('#staff-details').append('<p>Invalid Employee ID.</p>');
+            }
+        });
+    </script>
+</body>
+</html>
